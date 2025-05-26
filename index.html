@@ -1,0 +1,1106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+        /* Basic fade in/out for overlay */
+        #ticketDownloadedOverlay {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none; /* Allows clicks to pass through when not shown */
+        }
+        #ticketDownloadedOverlay.show {
+            opacity: 1;
+            pointer-events: auto; /* Catches clicks when shown */
+        }
+        /* Custom scrollbar for horizontal lists */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="bg-white font-sans">
+
+    <div id="splashScreen" class="flex justify-center items-center h-screen bg-blue-300">
+        <h1 class="text-white text-4xl font-bold">EventEase</h1>
+    </div>
+
+    <div id="signUpPage" class="hidden min-h-screen flex items-center justify-center bg-white p-4">
+        <form id="signUpForm" class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+            <h2 class="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+            <input type="text" id="signupUsername" placeholder="Name" class="w-full px-4 py-2 mb-4 border rounded-md" required />
+            <input type="email" id="signupEmail" placeholder="Email" class="w-full px-4 py-2 mb-4 border rounded-md" required />
+            <input type="password" id="signupPassword" placeholder="Password" class="w-full px-4 py-2 mb-6 border rounded-md" required />
+            <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" class="w-full px-4 py-2 mb-6 border rounded-md" required />
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Create Account</button>
+        </form>
+    </div>
+
+    <div id="homePage" class="hidden min-h-screen pb-24">
+        <div class="bg-white px-4 py-4 flex items-center justify-between shadow">
+            <div>
+                <p class="text-sm text-gray-500">Welcome,</p>
+                <h2 class="font-bold text-lg">Isabella Singh</h2>
+            </div>
+            <div class="flex items-center gap-2">
+                <p class="text-sm text-gray-500">Guelph, CA</p>
+                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zM12 11.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="px-4 mt-4">
+            <div class="flex items-center bg-gray-200 rounded-full px-4 py-2 space-x-2">
+                <input type="text" placeholder="Find amazing events" class="bg-gray-200 w-full focus:outline-none" />
+                <button aria-label="Search" class="p-1 rounded-full hover:bg-gray-300">
+                    <svg class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                    </svg>
+                </button>
+                <button aria-label="Filter" class="p-1 rounded-full hover:bg-gray-300" onclick="navigateTo('filterPage')">
+                    <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 5a1 1 0 012 0 1 1 0 11-2 0zm6 0a1 1 0 012 0 1 1 0 11-2 0zm6 0a1 1 0 012 0 1 1 0 11-2 0zM4 9h12v2H4zm0 4h8v2H4z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-4 mt-6">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-lg">Popular Events</h3>
+                <a href="#" class="text-blue-600 text-sm">VIEW ALL</a>
+            </div>
+            <div class="flex space-x-4 overflow-x-scroll pb-4">
+                <div class="min-w-[270px] bg-white rounded-lg shadow p-3 cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <img src="assets/Worldmusic.jpg" alt="Event Image" class="rounded-md mb-3 h-40 object-cover w-full" />
+                    <h4 class="font-semibold text-lg">World Music Festival</h4>
+                    <div class="text-sm text-gray-600 mt-1">📅 25-27 July, 23 | 📍 Valencia, ES</div>
+                    <div class="text-sm text-gray-500 mt-1">👥 6.2k joined</div>
+                    <button onclick="navigateTo('eventDetailsPage')" class="mt-3 w-full bg-black text-white py-1 rounded-md text-sm hover:bg-gray-800 transition">JOIN NOW</button>
+                    </div>
+                </div>
+            </div>
+        
+        
+
+        <div class="px-4 mt-6">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-lg">Choose By Category</h3>
+                <a href="#" class="text-blue-600 text-sm">VIEW ALL</a>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Design</button>
+                <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Art</button>
+                <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Sports</button>
+                <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Music</button>
+                <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Business</button>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 bg-white shadow p-2 flex justify-around border-t border-gray-200 z-50">
+            <a href="#" onclick="navigateTo('homePage'); return false;" class="flex flex-col items-center text-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8h6a2 2 0 012 2v7a2 2 0 01-2 2h-6v-6H9v6H3a2 2 0 01-2-2v-7a2 2 0 012-2h6z"/>
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="#" onclick="navigateTo('calendarPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span class="text-xs">Calendar</span>
+            </a>
+            <a href="#" onclick="navigateTo('mapPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                <span class="text-xs">Map</span>
+            </a>
+            <a href="#" onclick="navigateTo('profilePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M5.5 21a6.5 6.5 0 0113 0"/>
+                </svg>
+                <span class="text-xs">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="calendarPage" class="hidden min-h-screen pb-24 px-4 pt-6 bg-[#f0f2f5]">
+        <div class="flex items-center justify-between mb-4">
+            <button onclick="navigateTo('homePage')" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg text-center flex-1 -ml-6">Calendar <span class="text-gray-500">&#9660;</span></h2>
+            <button class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="5" cy="12" r="2"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <circle cx="19" cy="12" r="2"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 text-center mr-3">
+                    <div class="bg-blue-100 text-blue-700 rounded-md py-1">
+                        <div class="text-xs">Jul</div>
+                        <div class="font-bold text-sm">25</div>
+                    </div>
+                </div>
+                <div class="flex-grow bg-white rounded-lg shadow p-3 flex items-center justify-between cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <div class="flex items-center">
+                        <img src="assets/designermeetup.jpg" alt="Event Image" class="w-16 h-16 object-cover rounded-md mr-3">
+                        <div>
+                            <h4 class="font-semibold">Designers Meetup</h4>
+                            <p class="text-sm text-gray-500">Wellington, NY</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-600 text-sm font-bold">$49</p>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 text-center mr-3">
+                    <div class="bg-blue-100 text-blue-700 rounded-md py-1">
+                        <div class="text-xs">Jul</div>
+                        <div class="font-bold text-sm">27</div>
+                    </div>
+                </div>
+                <div class="flex-grow bg-white rounded-lg shadow p-3 flex items-center justify-between cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <div class="flex items-center">
+                        <img src="assets/artworkshop.jpg" alt="Event Image" class="w-16 h-16 object-cover rounded-md mr-3">
+                        <div>
+                            <h4 class="font-semibold">Art Workshop</h4>
+                            <p class="text-sm text-gray-500">Rockefeller Center, NY</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-600 text-sm font-bold">$99</p>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 text-center mr-3">
+                    <div class="bg-blue-100 text-blue-700 rounded-md py-1">
+                        <div class="text-xs">Jul</div>
+                        <div class="font-bold text-sm">29</div>
+                    </div>
+                </div>
+                <div class="flex-grow bg-white rounded-lg shadow p-3 flex items-center justify-between cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <div class="flex items-center">
+                        <img src="assets/productlaunch.jpg" alt="Event Image" class="w-16 h-16 object-cover rounded-md mr-3">
+                        <div>
+                            <h4 class="font-semibold">Product Launch Event</h4>
+                            <p class="text-sm text-gray-500">Times Square NY</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-600 text-sm font-bold">$0</p>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 text-center mr-3">
+                    <div class="bg-blue-100 text-blue-700 rounded-md py-1">
+                        <div class="text-xs">Jul</div>
+                        <div class="font-bold text-sm">31</div>
+                    </div>
+                </div>
+                <div class="flex-grow bg-white rounded-lg shadow p-3 flex items-center justify-between cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <div class="flex items-center">
+                        <img src="assets/musicaward.jpg" alt="Event Image" class="w-16 h-16 object-cover rounded-md mr-3">
+                        <div>
+                            <h4 class="font-semibold">Music Awards Ceremony</h4>
+                            <p class="text-sm text-gray-500">Wellington, NY</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-600 text-sm font-bold">$199</p>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 text-center mr-3">
+                    <div class="bg-blue-100 text-blue-700 rounded-md py-1">
+                        <div class="text-xs">Aug</div>
+                        <div class="font-bold text-sm">03</div>
+                    </div>
+                </div>
+                <div class="flex-grow bg-white rounded-lg shadow p-3 flex items-center justify-between cursor-pointer" onclick="navigateTo('eventDetailsPage')">
+                    <div class="flex items-center">
+                        <img src="assets/musicmasquerede.jpg" alt="Event Image" class="w-16 h-16 object-cover rounded-md mr-3">
+                        <div>
+                            <h4 class="font-semibold">Midnight Masquerade</h4>
+                            <p class="text-sm text-gray-500">New York, NY</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-600 text-sm font-bold">$50</p>
+                </div>
+            </div>
+        </div>
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-50">
+            <a href="#" onclick="navigateTo('homePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="#" onclick="navigateTo('calendarPage'); return false;" class="flex flex-col items-center text-blue-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="text-xs">Calendar</span>
+            </a>
+            <a href="#" onclick="navigateTo('mapPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                <span class="text-xs">Map</span>
+            </a>
+            <a href="#" onclick="navigateTo('profilePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M5.5 21a6.5 6.5 0 0113 0"/>
+                </svg>
+                <span class="text-xs">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div id="mapPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5]">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('homePage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <div class="relative flex-grow">
+                <input type="text" placeholder="Search events or locations..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="px-4 py-3 flex space-x-3 overflow-x-auto bg-white border-b border-gray-200 no-scrollbar">
+            <button class="px-4 py-1 bg-blue-600 text-white rounded-full text-sm flex-shrink-0 shadow-sm">All</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Design</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Art</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Sports</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Music</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Business</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Tech</button>
+            <button class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm flex-shrink-0 hover:bg-blue-200 transition">Food</button>
+        </div>
+
+        <div class="relative flex-grow bg-gray-300">
+            <img src="assets/map.png" alt="Map View" class="w-full h-full object-cover" />
+            
+            <div class="absolute bottom-0 left-0 right-0 px-4 pt-4 pb-24 z-10 overflow-x-auto no-scrollbar">
+                <div class="flex space-x-4">
+                    <div class="min-w-[270px] bg-white rounded-lg shadow-md p-3 cursor-pointer border border-gray-100 hover:shadow-lg transition-shadow" onclick="navigateTo('eventDetailsPage')">
+                        <img src="assets/Worldmusic.jpg" alt="World Music Festival" class="rounded-md mb-3 w-full h-[160px] object-cover object-center" />
+                        <h4 class="font-semibold text-lg text-gray-900">World Music Festival</h4>
+                        <div class="text-sm text-gray-600 mt-1">📅 25-27 July, 23 | 📍 Valencia, ES</div>
+                        <div class="text-sm text-gray-500 mt-1">👥 6.2k joined</div>
+                        <button class="mt-3 w-full bg-blue-600 text-white py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition" onclick="navigateTo('eventDetailsPage')">VIEW DETAILS</button>
+                    </div>
+
+                    <div class="min-w-[270px] bg-white rounded-lg shadow-md p-3 cursor-pointer border border-gray-100 hover:shadow-lg transition-shadow" onclick="navigateTo('eventDetailsPage')">
+                        <img src="assets/globalsummit.jpg" alt="Global Tech Summit" class="rounded-md mb-3 w-full h-[160px] object-cover object-center" />
+                        <h4 class="font-semibold text-lg text-gray-900">Global Tech Summit</h4>
+                        <div class="text-sm text-gray-600 mt-1">📅 10-12 Aug, 23 | 📍 San Francisco, US</div>
+                        <div class="text-sm text-gray-500 mt-1">👥 8.5k joined</div>
+                        <button class="mt-3 w-full bg-blue-600 text-white py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition" onclick="navigateTo('eventDetailsPage')">VIEW DETAILS</button>
+                    </div>
+
+                    <div class="min-w-[270px] bg-white rounded-lg shadow-md p-3 cursor-pointer border border-gray-100 hover:shadow-lg transition-shadow" onclick="navigateTo('eventDetailsPage')">
+                        <img src="assets/productlaunch.jpg" alt="Product Launch Event" class="rounded-md mb-3 w-full h-[160px] object-cover object-center" />
+                        <h4 class="font-semibold text-lg text-gray-900">Product Launch Event</h4>
+                        <div class="text-sm text-gray-600 mt-1">📅 01-05 Sep, 23 | 📍 Paris, FR</div>
+                        <div class="text-sm text-gray-500 mt-1">👥 3.1k joined</div>
+                        <button class="mt-3 w-full bg-blue-600 text-white py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition" onclick="navigateTo('eventDetailsPage')">VIEW DETAILS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-50">
+            <a href="#" onclick="navigateTo('homePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="#" onclick="navigateTo('calendarPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="text-xs">Calendar</span>
+            </a>
+            <a href="#" onclick="navigateTo('mapPage'); return false;" class="flex flex-col items-center text-blue-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                <span class="text-xs">Map</span>
+            </a>
+            <a href="#" onclick="navigateTo('profilePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M5.5 21a6.5 6.5 0 0113 0"/>
+                </svg>
+                <span class="text-xs">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div id="profilePage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5] p-6">
+        <div class="w-full max-w-md bg-gray-100 rounded-xl shadow-lg p-6 mx-auto">
+            <button onclick="navigateTo('homePage')" class="text-gray-700 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+
+            <div class="flex flex-col items-center mb-6">
+                <img src="assets/isabella.jpg" alt="Profile" class="w-20 h-20 rounded-full border-2 border-blue-500 mb-4">
+                <h2 class="text-xl font-semibold">Isabella Singh</h2>
+                <div class="flex justify-around w-full mt-4">
+                    <div class="text-center">
+                        <p class="font-bold text-lg">585</p>
+                        <p class="text-sm text-gray-500">Followers</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-bold text-lg">65</p>
+                        <p class="text-sm text-gray-500">Following</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-bold text-lg">6</p>
+                        <p class="text-sm text-gray-500">Events</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-300">
+
+            <div class="space-y-4">
+                <button class="w-full flex items-center bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition" onclick="navigateTo('createEventPage')">
+                    <svg class="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    <span class="font-medium text-gray-800">Create Event</span>
+                    <svg class="w-5 h-5 text-gray-400 ml-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M9.29 15.88L13.17 12 9.29 8.12l1.41-1.41L15.99 12l-5.29 5.29z"/></svg>
+                </button>
+                <button class="w-full flex items-center bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition" onclick="navigateTo('messagePage')">
+                    <svg class="w-6 h-6 text-green-600 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                    <span class="font-medium text-gray-800">Messages</span>
+                    <svg class="w-5 h-5 text-gray-400 ml-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M9.29 15.88L13.17 12 9.29 8.12l1.41-1.41L15.99 12l-5.29 5.29z"/></svg>
+                </button>
+                <button class="w-full flex items-center bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition" onclick="navigateTo('notificationPage')">
+                    <svg class="w-6 h-6 text-purple-600 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    <span class="font-medium text-gray-800">Notifications</span>
+                    <svg class="w-5 h-5 text-gray-400 ml-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M9.29 15.88L13.17 12 9.29 8.12l1.41-1.41L15.99 12l-5.29 5.29z"/></svg>
+                </button>
+                <button class="w-full flex items-center bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition">
+                    <svg class="w-6 h-6 text-yellow-600 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <span class="font-medium text-gray-800">Favorite Events</span>
+                    <svg class="w-5 h-5 text-gray-400 ml-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M9.29 15.88L13.17 12 9.29 8.12l1.41-1.41L15.99 12l-5.29 5.29z"/></svg>
+                </button>
+            </div>
+
+            <button onclick="confirmSignOut()" class="mt-8 w-full bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition">Sign Out</button>
+        </div>
+    </div>
+
+    <div id="createEventPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5] p-6">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="navigateTo('profilePage')" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Create New Event</h2>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 class="font-semibold text-lg mb-4">Event Details</h3>
+            <div class="mb-4">
+                <label for="eventName" class="block text-gray-700 text-sm font-semibold mb-2">Event Name</label>
+                <input type="text" id="eventName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Annual Tech Conference" />
+            </div>
+            <div class="mb-4">
+                <label for="eventCategory" class="block text-gray-700 text-sm font-semibold mb-2">Category</label>
+                <select id="eventCategory" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select Category</option>
+                    <option value="music">Music</option>
+                    <option value="sports">Sports</option>
+                    <option value="art">Art</option>
+                    <option value="tech">Tech</option>
+                    <option value="business">Business</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="eventDate" class="block text-gray-700 text-sm font-semibold mb-2">Date</label>
+                <input type="date" id="eventDate" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div class="mb-4">
+                <label for="eventTime" class="block text-gray-700 text-sm font-semibold mb-2">Time</label>
+                <input type="time" id="eventTime" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div class="mb-4">
+                <label for="eventLocation" class="block text-gray-700 text-sm font-semibold mb-2">Location</label>
+                <input type="text" id="eventLocation" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Exhibition Hall, New York" />
+            </div>
+            <div class="mb-4">
+                <label for="eventDescription" class="block text-gray-700 text-sm font-semibold mb-2">Description</label>
+                <textarea id="eventDescription" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tell us about your event..."></textarea>
+            </div>
+        </div>
+
+        <button onclick="navigateTo('eventPublishedSuccessPage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Publish Event</button>
+    </div>
+
+    <div id="messagePage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5]">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('profilePage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Messages</h2>
+            <button class="text-gray-600 hover:text-gray-800 focus:outline-none ml-auto">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex-grow overflow-y-auto p-4 space-y-4">
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start cursor-pointer">
+                <img src="assets/profile2.jpg" alt="User Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                <div class="flex-grow">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-semibold text-gray-900">Olivia Parker</h3>
+                        <span class="text-xs text-gray-500">10:30 AM</span>
+                    </div>
+                    <p class="text-sm text-gray-700">Hey, are you still planning to attend the tech meetup?</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start cursor-pointer">
+                <img src="assets/profile3.jpg" alt="User Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                <div class="flex-grow">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-semibold text-gray-900">Liam Johnson</h3>
+                        <span class="text-xs text-gray-500">Yesterday</span>
+                    </div>
+                    <p class="text-sm text-gray-700">That music festival was incredible! Thanks for the invite.</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start cursor-pointer">
+                <img src="assets/download.jpg" alt="User Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                <div class="flex-grow">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-semibold text-gray-900">Sophia Williams</h3>
+                        <span class="text-xs text-gray-500">2 days ago</span>
+                    </div>
+                    <p class="text-sm text-gray-700">Are you free to grab coffee next week?</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-50">
+            <a href="#" onclick="navigateTo('homePage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="#" onclick="navigateTo('calendarPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="text-xs">Calendar</span>
+            </a>
+            <a href="#" onclick="navigateTo('mapPage'); return false;" class="flex flex-col items-center text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                <span class="text-xs">Map</span>
+            </a>
+            <a href="#" onclick="navigateTo('profilePage'); return false;" class="flex flex-col items-center text-blue-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M5.5 21a6.5 6.5 0 0113 0"/>
+                </svg>
+                <span class="text-xs">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div id="eventDetailsPage" class="hidden min-h-screen bg-[#f0f2f5] pb-20">
+        <div class="relative h-64 bg-cover bg-center" style="background-image: url('assets/Worldmusic.jpg');">
+            <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center">
+                <button onclick="navigateTo('homePage')" class="bg-white rounded-full p-2 shadow-md">
+                    <svg class="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="bg-white rounded-full p-2 shadow-md">
+                    <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white mx-4 -mt-16 relative z-10 rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold mb-2">World Music Festival</h1>
+            <div class="flex items-center text-gray-600 text-sm mb-4">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M17 12h-2v2h2v-2zm-4 0h-2v2h2v-2zm-4 0H7v2h2v-2zm7-9h-1V1h-2v2H8V1H7v2H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM18 19H6V8h12v11z"/></svg>
+                <span class="mr-4">25-27 July, 23</span>
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+                <span>Valencia, ES</span>
+            </div>
+
+            <div class="flex items-center mb-4">
+                <div class="flex -space-x-2 mr-3">
+                    <img src="assets/download.jpg" alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white">
+                    <img src="assets/profile3.jpg" alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white">
+                    <img src="assets/profile2.jpg" alt="Attendee" class="w-8 h-8 rounded-full border-2 border-white">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-700 border-2 border-white">+30</div>
+                </div>
+                <span class="text-sm text-gray-700 mr-2">6.2k members are joined</span>
+                <button onclick="navigateTo('inviteFriendPage')" class="text-blue-600 text-sm font-semibold">VIEW ALL / INVITE</button>
+            </div>
+
+            <hr class="my-4 border-gray-200">
+
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <img src="assets/isabella.jpg" alt="Organizer" class="w-12 h-12 rounded-full mr-3">
+                    <div>
+                        <h5 class="font-semibold text-gray-900">Alexei Volkov</h5>
+                        <p class="text-sm text-gray-600">Event Organiser</p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="bg-gray-200 rounded-full p-2 hover:bg-gray-300 transition" onclick="navigateTo('messagePage')">
+                        <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                    </button>
+                    <button class="bg-gray-200 rounded-full p-2 hover:bg-gray-300 transition" onclick="navigateTo('organizerProfilePage')">
+                        <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.46.57 3.58.12.35.03.75-.25 1.02L6.62 10.79z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <hr class="my-4 border-gray-200">
+
+            <div>
+                <h5 class="font-semibold text-gray-900 mb-2">Description</h5>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    The highly anticipated World Music Festival is back. Alexei has been working tirelessly for over a year to bring together the best musicians from around the world to create a one-of-a-kind musical experience for you. This year's festival features a diverse lineup of genres including pop, rock, jazz, classical, and traditional folk music from various cultures. Get ready to immerse yourself in three days of non-stop music, amazing food, and unforgettable memories. Whether you're a long-time fan or new to the festival, there's something for everyone to enjoy. Come and be a part of this spectacular celebration of music and culture!
+                    <a href="#" class="text-blue-600 font-semibold" onclick="return false;">Read More</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-lg z-20">
+            <button onclick="navigateTo('ticketSelectionPage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">BUY A TICKET</button>
+        </div>
+    </div>
+
+    <div id="ticketSelectionPage" class="hidden min-h-screen bg-[#f0f2f5] pb-20">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('eventDetailsPage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Select Ticket</h2>
+        </div>
+
+        <div class="p-4 space-y-4">
+            <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+                <div>
+                    <h3 class="font-semibold text-lg text-gray-900">Standard Ticket</h3>
+                    <p class="text-sm text-gray-600">Access to all general areas</p>
+                    <p class="font-bold text-blue-600 mt-2">$25.00</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="bg-gray-200 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center">-</button>
+                    <span>1</span>
+                    <button class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center">+</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+                <div>
+                    <h3 class="font-semibold text-lg text-gray-900">VIP Ticket</h3>
+                    <p class="text-sm text-gray-600">Access to VIP lounge, priority seating</p>
+                    <p class="font-bold text-blue-600 mt-2">$75.00</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="bg-gray-200 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center">-</button>
+                    <span>0</span>
+                    <button class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center">+</button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+                <div>
+                    <h3 class="font-semibold text-lg text-gray-900">Early Bird Ticket</h3>
+                    <p class="text-sm text-gray-600">Limited availability, discounted price</p>
+                    <p class="font-bold text-blue-600 mt-2">$15.00</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="bg-gray-200 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center">-</button>
+                    <span>0</span>
+                    <button class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-lg z-20">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-bold">Total:</span>
+                <span class="text-xl font-bold text-blue-600">$25.00</span>
+            </div>
+            <button onclick="navigateTo('paymentMethodPage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Continue</button>
+        </div>
+    </div>
+
+    <div id="paymentMethodPage" class="hidden min-h-screen bg-[#f0f2f5] pb-20">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('ticketSelectionPage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Payment Method</h2>
+        </div>
+
+        <div class="p-4 space-y-4">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-lg mb-4">Saved Cards</h3>
+                <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="assets/visa_logo.png" alt="Visa" class="w-10 h-auto mr-3">
+                        <span class="font-medium">**** **** **** 1234</span>
+                    </div>
+                    <input type="radio" name="paymentMethod" class="form-radio text-blue-600" checked>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="assets/mastercard_logo.png" alt="Mastercard" class="w-10 h-auto mr-3">
+                        <span class="font-medium">**** **** **** 5678</span>
+                    </div>
+                    <input type="radio" name="paymentMethod" class="form-radio text-blue-600">
+                </div>
+                <button class="mt-4 w-full flex items-center justify-center text-blue-600 font-semibold py-2 border border-blue-600 rounded-lg hover:bg-blue-50 transition">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Add New Card
+                </button>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-lg mb-4">Other Options</h3>
+                <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="assets/paypal_logo.png" alt="PayPal" class="w-10 h-auto mr-3">
+                        <span class="font-medium">PayPal</span>
+                    </div>
+                    <input type="radio" name="paymentMethod" class="form-radio text-blue-600">
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="assets/google_pay_logo.png" alt="Google Pay" class="w-10 h-auto mr-3">
+                        <span class="font-medium">Google Pay</span>
+                    </div>
+                    <input type="radio" name="paymentMethod" class="form-radio text-blue-600">
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-lg z-20">
+            <button onclick="navigateTo('paymentConfirmationPage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Pay Now</button>
+        </div>
+    </div>
+
+    <div id="paymentConfirmationPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5] p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center mt-12">
+            <svg class="w-20 h-20 text-green-500 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            <h2 class="text-2xl font-bold mb-4">Payment Confirmed!</h2>
+            <p class="text-gray-700 mb-6">Your tickets have been successfully purchased.</p>
+            <button onclick="showTicketDownloadedOverlay()" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Download Ticket</button>
+            <button onclick="navigateTo('homePage')" class="w-full bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl text-lg mt-4 hover:bg-gray-300 transition">Back to Home</button>
+        </div>
+    </div>
+
+    <div id="ticketDownloadedOverlay" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center flex flex-col items-center">
+            <svg class="w-20 h-20 text-green-500 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <p class="text-xl font-semibold text-gray-800">Ticket Downloaded!</p>
+        </div>
+    </div>
+
+    <div id="downloadSuccessPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5] p-6">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="navigateTo('homePage')" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">My Ticket</h2>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 text-center mb-6">
+            <img src="assets/Worldmusic.jpg" alt="Event Banner" class="w-full h-40 object-cover rounded-lg mb-4">
+            <h3 class="text-xl font-bold mb-2">World Music Festival</h3>
+            <p class="text-gray-600 mb-4">July 25-27, 2023 | Valencia, ES</p>
+            <p class="font-semibold text-lg text-blue-600 mb-4">Ticket Type: Standard</p>
+            <img src="assets/barcode.png" alt="Barcode" class="w-48 mx-auto my-4">
+            <p class="text-sm text-gray-500">Scan this code at the event entrance.</p>
+        </div>
+
+        <button onclick="navigateTo('homePage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Back to Home</button>
+    </div>
+
+    <div id="organizerProfilePage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5] p-6">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="navigateTo('eventDetailsPage')" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Organizer Profile</h2>
+        </div>
+
+        <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6 mx-auto text-center">
+            <img src="assets/organizer.jpg" alt="Organizer Profile" class="w-24 h-24 rounded-full border-4 border-blue-500 mx-auto mb-4 object-cover">
+            <h3 class="text-2xl font-bold text-gray-900">Alexei Volkov</h3>
+            <p class="text-gray-600 mb-4">Event Organiser</p>
+            
+            <div class="flex justify-center space-x-6 mb-6">
+                <div class="text-center">
+                    <p class="font-bold text-xl">12k</p>
+                    <p class="text-sm text-gray-500">Followers</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-bold text-xl">120</p>
+                    <p class="text-sm text-gray-500">Events</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-4 mb-6">
+                <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Follow</button>
+                <button class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-gray-300 transition" onclick="navigateTo('messagePage')">Message</button>
+            </div>
+
+            <hr class="my-6 border-gray-200">
+
+            <h4 class="font-semibold text-lg text-left mb-4">About Alexei</h4>
+            <p class="text-gray-700 text-sm leading-relaxed text-left mb-4">
+                Alexei is a passionate event organizer with over 10 years of experience in curating unforgettable experiences. Known for his meticulous planning and creative vision, he specializes in large-scale music festivals and tech summits. His events are renowned for their seamless execution and vibrant atmosphere, attracting thousands of attendees from around the globe.
+            </p>
+
+            <h4 class="font-semibold text-lg text-left mb-4">Upcoming Events</h4>
+            <div class="space-y-4">
+                <div class="bg-gray-100 rounded-lg p-3 flex items-center shadow-sm">
+                    <img src="assets/Worldmusic.jpg" alt="Event" class="w-16 h-16 object-cover rounded-md mr-3">
+                    <div>
+                        <p class="font-semibold text-gray-900">World Music Festival</p>
+                        <p class="text-sm text-gray-600">July 25-27, Valencia, ES</p>
+                    </div>
+                    <button class="ml-auto text-blue-600 text-sm font-semibold" onclick="navigateTo('eventDetailsPage')">View</button>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-3 flex items-center shadow-sm">
+                    <img src="assets/globalsummit.jpg" alt="Event" class="w-16 h-16 object-cover rounded-md mr-3">
+                    <div>
+                        <p class="font-semibold text-gray-900">Global Tech Summit</p>
+                        <p class="text-sm text-gray-600">August 10-12, San Francisco, US</p>
+                    </div>
+                    <button class="ml-auto text-blue-600 text-sm font-semibold" onclick="navigateTo('eventDetailsPage')">View</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="inviteFriendPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5]">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('eventDetailsPage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Invite Friends</h2>
+        </div>
+
+        <div class="px-4 py-3 bg-white border-b border-gray-200">
+            <div class="relative">
+                <input type="text" placeholder="Search friends..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="flex-grow overflow-y-auto p-4 space-y-4">
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="assets/profile7.jpg" alt="Friend Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                    <div>
+                        <h3 class="font-semibold text-gray-900">David Smith</h3>
+                        <p class="text-sm text-gray-600">12 mutual events</p>
+                    </div>
+                </div>
+                <button class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-sm font-semibold hover:bg-blue-200 transition">Invite</button>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="assets/profile8.jpg" alt="Friend Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Emily White</h3>
+                        <p class="text-sm text-gray-600">8 mutual events</p>
+                    </div>
+                </div>
+                <button class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-sm font-semibold hover:bg-blue-200 transition">Invite</button>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="assets/profile9.jpg" alt="Friend Avatar" class="w-12 h-12 rounded-full mr-4 object-cover">
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Michael Brown</h3>
+                        <p class="text-sm text-gray-600">5 mutual events</p>
+                    </div>
+                </div>
+                <button class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-sm font-semibold hover:bg-blue-200 transition">Invite</button>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white shadow-lg border-t border-gray-200">
+            <button class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Send Invitations</button>
+        </div>
+    </div>
+
+    <div id="filterPage" class="hidden min-h-screen flex flex-col bg-[#f0f2f5]">
+        <div class="bg-white px-4 py-3 flex items-center shadow-sm border-b border-gray-200">
+            <button onclick="navigateTo('homePage')" class="text-gray-600 hover:text-gray-800 focus:outline-none mr-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <h2 class="font-bold text-lg flex-1 text-center -ml-6">Filter</h2>
+            <button class="text-blue-600 font-semibold text-sm">Reset</button>
+        </div>
+
+        <div class="p-4 space-y-6">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-lg mb-3">Category</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="px-4 py-1 bg-blue-600 text-white rounded-full text-sm">All</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Music</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Art</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Sports</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Business</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Tech</button>
+                    <button class="px-4 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">Food</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-lg mb-3">Date</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio" name="filterDate" value="any" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-gray-700">Any Date</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="filterDate" value="today" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Today</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="filterDate" value="tomorrow" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Tomorrow</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="filterDate" value="this_week" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">This Week</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h3 class="font-semibold text-lg mb-3">Price</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio" name="filterPrice" value="any" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-gray-700">Any Price</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="filterPrice" value="free" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Free</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="filterPrice" value="paid" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Paid</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white shadow-lg border-t border-gray-200 mt-auto">
+            <button onclick="navigateTo('homePage')" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl text-lg hover:bg-blue-700 transition">Apply Filters</button>
+        </div>
+    </div>
+
+    <div id="eventPublishedSuccessPage" class="hidden min-h-screen flex flex-col justify-center items-center bg-blue-600 p-6">
+        <svg class="w-24 h-24 text-white mb-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        <h2 class="text-3xl font-bold text-white mb-4">Event Published!</h2>
+        <p class="text-white text-lg text-center mb-8">Your event has been successfully created and is now live.</p>
+        <button onclick="navigateTo('homePage')" class="w-full max-w-xs bg-white text-blue-600 font-semibold py-3 rounded-xl text-lg hover:bg-gray-100 transition">Back to Home</button>
+    </div>
+
+    <div>
+    <script>
+        // Function to navigate between pages
+        function navigateTo(pageId) {
+           const allPageIds = [
+            'splashScreen', 'signUpPage', 'homePage', 'calendarPage', 'mapPage', 'profilePage',
+            'createEventPage', 'messagePage', 'eventDetailsPage', 'organizerProfilePage',
+            'ticketSelectionPage', 'paymentMethodPage', 'paymentConfirmationPage',
+            'inviteFriendPage', 'filterPage', 'downloadSuccessPage',
+            'eventPublishedSuccessPage'
+        ];
+
+            allPageIds.forEach(id => {
+                const page = document.getElementById(id);
+                if (page) page.classList.add('hidden');
+            });
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+
+                // Clear signup form fields
+                if (pageId === 'signUpPage') {
+                    const fields = ['signupUsername', 'signupEmail', 'signupPassword', 'signupConfirmPassword'];
+                    fields.forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        if (field) field.value = '';
+                    });
+                }
+
+                // Adjust background color
+                const lightGrayPages = [
+                    'homePage', 'calendarPage', 'profilePage', 'createEventPage', 'messagePage',
+                    'eventDetailsPage', 'organizerProfilePage', 'ticketSelectionPage',
+                    'paymentMethodPage', 'paymentConfirmationPage', 'inviteFriendPage',
+                    'filterPage', 'downloadSuccessPage'
+                ];
+
+                if (lightGrayPages.includes(pageId)) {
+                    document.body.classList.remove('bg-white');
+                    document.body.classList.add('bg-[#f0f2f5]');
+                } else {
+                    document.body.classList.remove('bg-[#f0f2f5]');
+                    document.body.classList.add('bg-white');
+                }
+            }
+        }
+
+        // Show ticket downloaded overlay
+        function showTicketDownloadedOverlay() {
+            const overlay = document.getElementById('ticketDownloadedOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                overlay.style.display = 'flex'; // Ensure it's displayed for transition
+
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        overlay.style.display = 'none'; // Hide after transition
+                        navigateTo('downloadSuccessPage');
+                    }, 300); // This matches the CSS transition duration
+                }, 2000); // Show overlay for 2 seconds
+            }
+        }
+
+        // On initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            navigateTo('splashScreen');
+            setTimeout(() => {
+                navigateTo('signUpPage');
+            }, 2000);
+        });
+
+        // Handle sign-up form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signUpForm');
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    // Basic validation for signup (you might want more robust validation)
+                    const username = document.getElementById('signupUsername').value;
+                    const email = document.getElementById('signupEmail').value;
+                    const password = document.getElementById('signupPassword').value;
+                    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match!');
+                        return;
+                    }
+                    if (username && email && password) {
+                        navigateTo('homePage');
+                    } else {
+                        alert('Please fill in all fields.');
+                    }
+                });
+            }
+        });
+
+        // Confirm sign out
+        function confirmSignOut() {
+            if (confirm('Are you sure you want to sign out?')) {
+                navigateTo('signUpPage');
+            }
+        }
+
+
+    </script>
+    </div>
+</body>
+</html>
